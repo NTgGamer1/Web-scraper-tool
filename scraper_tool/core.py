@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .fetcher import FetchError, fetch_url
+from .parser import parse_page
 
 
 def analyze_url(url: str, timeout: int = 15) -> dict:
@@ -25,17 +26,19 @@ def analyze_url(url: str, timeout: int = 15) -> dict:
             "error": exc.to_dict(),
         }
 
+    parsed = parse_page(fetched.html)
+
     return {
         "input_url": fetched.input_url,
         "final_url": fetched.final_url,
         "status_code": fetched.status_code,
         "fetched_at": fetched.fetched_at,
-        "title": None,
-        "description": None,
+        "title": parsed.get("title"),
+        "description": parsed.get("description"),
         "motto_best": None,
         "motto_candidates": [],
         "technologies": [],
-        "page_details": {},
+        "page_details": parsed.get("page_details", {}),
         "warnings": [],
         "error": None,
     }
