@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .detector import detect_technologies
 from .fetcher import FetchError, fetch_url
 from .parser import parse_page
 
@@ -27,6 +28,7 @@ def analyze_url(url: str, timeout: int = 15) -> dict:
         }
 
     parsed = parse_page(fetched.html)
+    technologies = detect_technologies(fetched.html, fetched.headers)
 
     return {
         "input_url": fetched.input_url,
@@ -37,7 +39,7 @@ def analyze_url(url: str, timeout: int = 15) -> dict:
         "description": parsed.get("description"),
         "motto_best": None,
         "motto_candidates": [],
-        "technologies": [],
+        "technologies": technologies,
         "page_details": parsed.get("page_details", {}),
         "warnings": [],
         "error": None,
